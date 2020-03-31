@@ -1,0 +1,7 @@
+{
+    "schemaType": "LAUNCHER",
+    "id": "veos-nerdlet-launcher",
+    "displayName": "VeosNerdletLauncher",
+    "description": "Describe me",
+    "rootNerdletId": "veos-nerdlet-nerdlet"
+}
