@@ -44,6 +44,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
   page (page) {
     if(page == 'ONOFF') this.ONOFF()
     if(page == 'INVENTARIO') this.INVENTARIO()
+    if(page == 'DISPENCACION') this.DISPENCACION()
   }
 
   async ONOFF () {
@@ -121,8 +122,6 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
 
     coffe = coffe / machines.length
     milk = milk / machines.length
-    // console.log('coffe: ', coffe)
-    // console.log('milk: ', milk)
 
     INVENTARIO = {
       load: false,
@@ -135,6 +134,38 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     // timer
     await delay(T * 1000)
     if(this.state.page == 'INVENTARIO') this.INVENTARIO()
+  }
+
+  async DISPENCACION () {
+    console.log('DISPENCACION .....................')
+
+    // consume data
+    let res, machines
+
+    this.setState({ page: 'DISPENCACION' })
+
+    let DISPENCACION = { ...this.state.DISPENCACION }
+    DISPENCACION.load = true;
+    this.setState({ DISPENCACION })
+
+    res = await axios.get('http://localhost:3000/api/dispensing')
+    machines = res.data
+    console.log('machines: ', machines)
+
+    let { dispensations, conflicts} = machines
+
+    // parse data
+    DISPENCACION = {
+      load: false,
+      dispensations,
+      conflicts,
+      fun: ((dispensations) / (dispensations + conflicts) * 100).toFixed(2),
+    }
+    this.setState({ DISPENCACION })
+
+    // timer
+    await delay(T * 1000)
+    if(this.state.page == 'DISPENCACION') this.DISPENCACION()
   }
 
   componentDidMount() {
@@ -172,7 +203,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
               <span class="line top"></span>
             </article>
 
-            <article class="service top-right">
+            <article class="service top-right" onClick={() => this.page('DISPENCACION')}>
               <img src={dispensacion} />
               <span class="tag">DISPENCACIÓN</span>
               <span class="line top"></span>
@@ -247,9 +278,33 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                       </div>
                     )
                     break;
-                  case 'DISPENCACIÓN':
-                    return <h1>dispensacion!</h1>
-                  break;
+                  case 'DISPENCACION':
+                    return (
+                      <div class="details">
+                        <header>
+                          <img src={dispensacion}/>&nbsp; Dispensación
+                          {this.state.DISPENCACION.load == true ? (<div class="lds-ring"><div></div><div></div><div></div><div></div></div>) : ('')}
+                        </header>
+                        <div class="sections">
+                          <div class="sections-headers">
+                            <p class="selected">Function {this.state.DISPENCACION.fun}%</p>
+                            <p>Speed 100%</p>
+                            <p>Consistency 100%</p>
+                          </div>
+                          <section class="sections-body">
+                            <div class="element">
+                              <span class="circle"></span>
+                              <p><b>Dispensadas:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.DISPENCACION.dispensations}</small></p>
+                            </div>
+                            <div class="element">
+                              <span class="circle"></span>
+                              <p><b>Conflicto:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.DISPENCACION.conflicts}</small></p>
+                            </div>
+                          </section>
+                        </div>
+                      </div>
+                    )
+                    break;
                   default: return null; break;
                 }
               }).call(this)
