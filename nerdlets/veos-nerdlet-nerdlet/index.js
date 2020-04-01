@@ -114,17 +114,21 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     machines.forEach(el => {
 
       let inventory = JSON.parse(el.inventory.replace(/'/g, '"'))
-      // console.log('inventory: ', inventory)
 
       coffe += inventory.cafe
       milk += inventory.leche
     })
 
+    coffe = coffe / machines.length
+    milk = milk / machines.length
+    // console.log('coffe: ', coffe)
+    // console.log('milk: ', milk)
+
     INVENTARIO = {
       load: false,
-      coffe: (coffe / machines.length).toFixed(2),
-      milk: (milk / machines.length).toFixed(2),
-      fun: (coffe + milk / 2).toFixed(2),
+      coffe: coffe.toFixed(2),
+      milk: milk.toFixed(2),
+      fun: ((coffe + milk) / 2 * 100).toFixed(2),
     }
     this.setState({ INVENTARIO })
 
@@ -225,7 +229,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                         </header>
                         <div class="sections">
                           <div class="sections-headers">
-                            <p class="selected">Function {this.state.fun}%</p>
+                            <p class="selected">Function {this.state.INVENTARIO.fun}%</p>
                             <p>Speed 100%</p>
                             <p>Consistency 100%</p>
                           </div>
