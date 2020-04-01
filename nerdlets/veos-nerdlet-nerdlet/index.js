@@ -55,10 +55,13 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     this.setState({ ONOFF })
 
 
-    res = await axios.get('http://localhost:3000/api/unique-machines')
-    machines = res.data
+    // res = await axios.get('http://localhost:3000/api/unique-machines')
+    // machines = res.data
 
-    res = await axios.get('http://localhost:3000/api/machines-state?machines=' + JSON.stringify(machines))
+    // res = await axios.get('http://localhost:3000/api/machines-state?machines=' + JSON.stringify(machines))
+    // machines = res.data
+
+    res = await axios.get('http://localhost:3000/api/machines-state')
     machines = res.data
     console.log('machines: ', machines)
 
@@ -151,13 +154,8 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                     return (
                       <div class="details">
                         <header>
-                          <img src={on_off}/>&nbsp; Maquinas On/Off &nbsp; {this.state.ONOFF.load}
-
-                          {this.state.ONOFF.load == true ? (
-                            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-                          ) : (
-                            ''
-                          )}
+                          <img src={on_off}/>&nbsp; Maquinas On/Off &nbsp;
+                          {this.state.ONOFF.load == true ? (<div class="lds-ring"><div></div><div></div><div></div><div></div></div>) : ('')}
                         </header>
                         <div class="sections">
                           <div class="sections-headers">
@@ -212,64 +210,6 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                 }
               }).call(this)
             }
-
-            {/*{this.state.page == 'on-off' ? (
-              <h1>on-off!</h1>
-            ) : (
-
-            )};*/}
-
-            {/* ON OFF */}
-            {/*<div>
-              <div class="details">
-                <header>
-                  <img src={on_off}/>&nbsp; Maquinas On/Off
-                </header>
-                <div class="sections">
-                  <div class="sections-headers">
-                    <p class="selected">Function {this.state.fun}%</p>
-                    <p>Speed 100%</p>
-                    <p>Consistency 100%</p>
-                  </div>
-                  <section class="sections-body">
-                    <div class="element">
-                      <span class="circle"></span>
-                      <p><b>Maquinas On:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.on}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.on_p}%</small></p>
-                    </div>
-                    <div class="element">
-                      <span class="circle CRITICAL"></span>
-                      <p><b>Maquinas Off:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.off}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.off_p}%</small></p>
-                    </div>
-                  </section>
-                </div>
-              </div>
-            </div>*/}
-
-            {/* ON OFF */}
-            {/*<div>
-              <div class="details">
-                <header>
-                  <img src={on_off}/>&nbsp; Maquinas On/Off
-                </header>
-                <div class="sections">
-                  <div class="sections-headers">
-                    <p class="selected">Function {this.state.fun}%</p>
-                    <p>Speed 100%</p>
-                    <p>Consistency 100%</p>
-                  </div>
-                  <section class="sections-body">
-                    <div class="element">
-                      <span class="circle"></span>
-                      <p><b>Maquinas On:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.on}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.on_p}%</small></p>
-                    </div>
-                    <div class="element">
-                      <span class="circle CRITICAL"></span>
-                      <p><b>Maquinas Off:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.off}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.off_p}%</small></p>
-                    </div>
-                  </section>
-                </div>
-              </div>
-            </div>*/}
 
           </div>
 
