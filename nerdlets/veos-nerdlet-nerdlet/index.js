@@ -10,7 +10,7 @@ import dispensacion from './img/dispensacion.png'
 import pagos        from './img/pagos.png'
 import conectividad from './img/conectividad.png'
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
+const delay = ms => new Promise(res => setTimeout(res, ms))
 const T = 10
 
 export default class VeosNerdletNerdletNerdlet extends React.Component {
@@ -30,7 +30,12 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
         off_p: 0,
       },
 
-      INVENTARIO: {}
+      INVENTARIO: {
+        load: true,
+        coffe: 0,
+        milk: 0,
+        fun: 0,
+      }
     }
 
     this.page = this.page.bind(this)
@@ -49,11 +54,9 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
 
     this.setState({ page: 'ONOFF' })
 
-
     let ONOFF = { ...this.state.ONOFF }
     ONOFF.load = true;
     this.setState({ ONOFF })
-
 
     // res = await axios.get('http://localhost:3000/api/unique-machines')
     // machines = res.data
@@ -91,7 +94,43 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
 
   async INVENTARIO () {
     console.log('INVENTARIO .....................')
+
+    // consume data
+    let res, machines
+
     this.setState({ page: 'INVENTARIO' })
+
+    let INVENTARIO = { ...this.state.INVENTARIO }
+    INVENTARIO.load = true;
+    this.setState({ INVENTARIO })
+
+    res = await axios.get('http://localhost:3000/api/machine-inventory')
+    machines = res.data
+    console.log('machines: ', machines)
+
+    // parse data
+    let coffe = 0, milk = 0, fun = 0
+
+    machines.forEach(el => {
+
+      let inventory = JSON.parse(el.inventory.replace(/'/g, '"'))
+      // console.log('inventory: ', inventory)
+
+      coffe += inventory.cafe
+      milk += inventory.leche
+    })
+
+    INVENTARIO = {
+      load: false,
+      coffe: (coffe / machines.length).toFixed(2),
+      milk: (milk / machines.length).toFixed(2),
+      fun: (coffe + milk / 2).toFixed(2),
+    }
+    this.setState({ INVENTARIO })
+
+    // timer
+    await delay(T * 1000)
+    if(this.state.page == 'INVENTARIO') this.INVENTARIO()
   }
 
   componentDidMount() {
@@ -182,6 +221,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                       <div class="details">
                         <header>
                           <img src={inventario}/>&nbsp; Inventario
+                          {this.state.INVENTARIO.load == true ? (<div class="lds-ring"><div></div><div></div><div></div><div></div></div>) : ('')}
                         </header>
                         <div class="sections">
                           <div class="sections-headers">
@@ -190,14 +230,14 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                             <p>Consistency 100%</p>
                           </div>
                           <section class="sections-body">
-                            {/*<div class="element">
+                            <div class="element">
                               <span class="circle"></span>
-                              <p><b>Maquinas On:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.on}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.on_p}%</small></p>
+                              <p><b>Café:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.INVENTARIO.coffe}</small></p>
                             </div>
                             <div class="element">
-                              <span class="circle CRITICAL"></span>
-                              <p><b>Maquinas Off:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.off}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.off_p}%</small></p>
-                            </div>*/}
+                              <span class="circle"></span>
+                              <p><b>Leche:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.INVENTARIO.milk}</small></p>
+                            </div>
                           </section>
                         </div>
                       </div>
