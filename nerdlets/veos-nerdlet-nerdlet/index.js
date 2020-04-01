@@ -22,6 +22,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
       page: '',
 
       ONOFF: {
+        load: true,
         on: 0,
         off: 0,
         fun: 0,
@@ -48,6 +49,12 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
 
     this.setState({ page: 'ONOFF' })
 
+
+    let ONOFF = { ...this.state.ONOFF }
+    ONOFF.load = true;
+    this.setState({ ONOFF })
+
+
     res = await axios.get('http://localhost:3000/api/unique-machines')
     machines = res.data
 
@@ -63,7 +70,8 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
       else off += 1
     })
 
-    const ONOFF = {
+    ONOFF = {
+      load: false,
       on: on,
       off: off,
       fun: (on / machines.length * 100).toFixed(2),
@@ -143,7 +151,13 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                     return (
                       <div class="details">
                         <header>
-                          <img src={on_off}/>&nbsp; Maquinas On/Off
+                          <img src={on_off}/>&nbsp; Maquinas On/Off &nbsp; {this.state.ONOFF.load}
+
+                          {this.state.ONOFF.load == true ? (
+                            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                          ) : (
+                            ''
+                          )}
                         </header>
                         <div class="sections">
                           <div class="sections-headers">
@@ -202,13 +216,6 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
             {/*{this.state.page == 'on-off' ? (
               <h1>on-off!</h1>
             ) : (
-
-
-              {this.state.page == 'on-off' ? (
-                <h1>on-off!</h1>
-              ) : (
-
-              )};
 
             )};*/}
 
