@@ -1,7 +1,7 @@
 {
     "schemaType": "LAUNCHER",
     "id": "veos-nerdlet-launcher",
-    "displayName": "VeosNerdletLauncher",
+    "displayName": "SmartVending",
     "description": "Describe me",
     "rootNerdletId": "veos-nerdlet-nerdlet"
 }
