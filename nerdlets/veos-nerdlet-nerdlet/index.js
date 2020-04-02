@@ -13,6 +13,9 @@ import conectividad from './img/conectividad.png'
 const delay = ms => new Promise(res => setTimeout(res, ms))
 const T = 10
 
+// const URL = 'https://veos-server.now.sh'
+const URL = 'http://localhost:3000'
+
 export default class VeosNerdletNerdletNerdlet extends React.Component {
 
   constructor(props) {
@@ -82,7 +85,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     // res = await axios.get('http://localhost:3000/api/machines-state?machines=' + JSON.stringify(machines))
     // machines = res.data
 
-    res = await axios.get('http://localhost:3000/api/machines-state')
+    res = await axios.get(URL + '/api/machines-state')
     machines = res.data
     console.log('machines: ', machines)
 
@@ -122,7 +125,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     INVENTARIO.load = true;
     this.setState({ INVENTARIO })
 
-    res = await axios.get('http://localhost:3000/api/machine-inventory')
+    res = await axios.get(URL + '/api/machine-inventory')
     machines = res.data
     console.log('machines: ', machines)
 
@@ -165,7 +168,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     DISPENCACION.load = true;
     this.setState({ DISPENCACION })
 
-    res = await axios.get('http://localhost:3000/api/dispensing')
+    res = await axios.get(URL + '/api/dispensing')
     machines = res.data
     console.log('machines: ', machines)
 
@@ -197,7 +200,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     PAGOS.load = true;
     this.setState({ PAGOS })
 
-    res = await axios.get('http://localhost:3000/api/payment')
+    res = await axios.get(URL + '/api/payment')
     machines = res.data
     console.log('machines: ', machines)
 
