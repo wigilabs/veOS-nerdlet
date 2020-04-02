@@ -13,8 +13,8 @@ import conectividad from './img/conectividad.png'
 const delay = ms => new Promise(res => setTimeout(res, ms))
 const T = 10
 
-// const URL = 'https://veos-server.now.sh'
-const URL = 'http://localhost:3000'
+const URL = 'https://veos-server.now.sh'
+// const URL = 'http://localhost:3000'
 
 export default class VeosNerdletNerdletNerdlet extends React.Component {
 
@@ -65,6 +65,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     if(page == 'INVENTARIO') this.INVENTARIO()
     if(page == 'DISPENCACION') this.DISPENCACION()
     if(page == 'PAGOS') this.PAGOS()
+    if(page == 'CONECTIVIDAD') this.CONECTIVIDAD()
   }
 
   async ONOFF () {
@@ -222,6 +223,49 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     if(this.state.page == 'PAGOS') this.PAGOS()
   }
 
+  async CONECTIVIDAD () {
+    console.log('CONECTIVIDAD .....................')
+
+    // consume data
+    let res, machines
+
+    this.setState({ page: 'CONECTIVIDAD' })
+
+    let CONECTIVIDAD = { ...this.state.CONECTIVIDAD }
+    CONECTIVIDAD.load = true;
+    this.setState({ CONECTIVIDAD })
+
+    res = await axios.get(URL + '/api/connectivity')
+    machines = res.data
+    console.log('machines: ', machines)
+
+    // parse data
+    let good = 0, interm = 0, fun = 0
+
+    machines.forEach(el => {
+      if(el.speed > 1000 && el.stability > 0.7) good += 1
+      else interm += 1
+    })
+
+    console.log('good: ', good)
+    console.log('interm: ', interm)
+
+    CONECTIVIDAD = {
+      load: false,
+      good: good,
+      interm: interm,
+      fun: (good / machines.length * 100).toFixed(2),
+      good_p: (good / machines.length * 100).toFixed(2),
+      interm_p: (interm / machines.length * 100).toFixed(2),
+    }
+
+    this.setState({ CONECTIVIDAD })
+
+    // timer
+    await delay(T * 1000)
+    if(this.state.page == 'CONECTIVIDAD') this.CONECTIVIDAD()
+  }
+
   componentDidMount() {
     this.ONOFF()
   }
@@ -269,7 +313,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
               <span class="line right"></span>
             </article>
 
-            <article class="service bottom-right">
+            <article class="service bottom-right" onClick={() => this.page('CONECTIVIDAD')}>
               <img src={conectividad} />
               <span class="tag bottom">CONECTIVIDAD</span>
               <span class="line bottom"></span>
@@ -380,6 +424,33 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                             <div class="element">
                               <span class="circle CRITICAL"></span>
                               <p><b>Fallidos:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.PAGOS.failed}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.PAGOS.failed_p}</small></p>
+                            </div>
+                          </section>
+                        </div>
+                      </div>
+                    )
+                    break;
+                  case 'CONECTIVIDAD':
+                    return (
+                      <div class="details">
+                        <header>
+                          <img src={conectividad}/>&nbsp; Conectividad
+                          {this.state.CONECTIVIDAD.load == true ? (<div class="lds-ring"><div></div><div></div><div></div><div></div></div>) : ('')}
+                        </header>
+                        <div class="sections">
+                          <div class="sections-headers">
+                            <p class="selected">Function {this.state.CONECTIVIDAD.fun}%</p>
+                            <p>Speed 100%</p>
+                            <p>Consistency 100%</p>
+                          </div>
+                          <section class="sections-body">
+                            <div class="element">
+                              <span class="circle"></span>
+                              <p><b>Conexión Ok::</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.CONECTIVIDAD.good}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.CONECTIVIDAD.good_p}%</small></p>
+                            </div>
+                            <div class="element">
+                              <span class="circle CRITICAL"></span>
+                              <p><b>Intermitentes:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.CONECTIVIDAD.interm}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.CONECTIVIDAD.interm_p}%</small></p>
                             </div>
                           </section>
                         </div>
