@@ -35,7 +35,23 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
         coffe: 0,
         milk: 0,
         fun: 0,
-      }
+      },
+
+      DISPENCACION: {
+        load: true,
+        dispensations: 0,
+        conflicts: 0,
+        fun: 0,
+      },
+
+      PAGOS: {
+        load: true,
+        completed: 0,
+        failed: 0,
+        fun: 0,
+        completed_p: 0,
+        failed_p: 0,
+      },
     }
 
     this.page = this.page.bind(this)
@@ -45,6 +61,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     if(page == 'ONOFF') this.ONOFF()
     if(page == 'INVENTARIO') this.INVENTARIO()
     if(page == 'DISPENCACION') this.DISPENCACION()
+    if(page == 'PAGOS') this.PAGOS()
   }
 
   async ONOFF () {
@@ -125,8 +142,8 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
 
     INVENTARIO = {
       load: false,
-      coffe: coffe.toFixed(2),
-      milk: milk.toFixed(2),
+      coffe: (coffe * 100).toFixed(2),
+      milk: (milk * 100).toFixed(2),
       fun: ((coffe + milk) / 2 * 100).toFixed(2),
     }
     this.setState({ INVENTARIO })
@@ -166,6 +183,40 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
     // timer
     await delay(T * 1000)
     if(this.state.page == 'DISPENCACION') this.DISPENCACION()
+  }
+
+  async PAGOS () {
+    console.log('PAGOS .....................')
+
+    // consume data
+    let res, machines
+
+    this.setState({ page: 'PAGOS' })
+
+    let PAGOS = { ...this.state.PAGOS }
+    PAGOS.load = true;
+    this.setState({ PAGOS })
+
+    res = await axios.get('http://localhost:3000/api/payment')
+    machines = res.data
+    console.log('machines: ', machines)
+
+    let { completed, failed} = machines
+
+    // parse data
+    PAGOS = {
+      load: false,
+      completed,
+      failed,
+      fun: ((completed) / (completed + failed) * 100).toFixed(2),
+      completed_p: ((completed) / (completed + failed) * 100).toFixed(2),
+      failed_p: ((failed) / (completed + failed) * 100).toFixed(2),
+    }
+    this.setState({ PAGOS })
+
+    // timer
+    await delay(T * 1000)
+    if(this.state.page == 'PAGOS') this.PAGOS()
   }
 
   componentDidMount() {
@@ -209,7 +260,7 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
               <span class="line top"></span>
             </article>
 
-            <article class="service right">
+            <article class="service right" onClick={() => this.page('PAGOS')}>
               <img src={pagos} />
               <span class="tag">PAGOS</span>
               <span class="line right"></span>
@@ -267,11 +318,11 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                           <section class="sections-body">
                             <div class="element">
                               <span class="circle"></span>
-                              <p><b>Café:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.INVENTARIO.coffe}</small></p>
+                              <p><b>Café:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.INVENTARIO.coffe}%</small></p>
                             </div>
                             <div class="element">
                               <span class="circle"></span>
-                              <p><b>Leche:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.INVENTARIO.milk}</small></p>
+                              <p><b>Leche:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.INVENTARIO.milk}%</small></p>
                             </div>
                           </section>
                         </div>
@@ -297,8 +348,35 @@ export default class VeosNerdletNerdletNerdlet extends React.Component {
                               <p><b>Dispensadas:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.DISPENCACION.dispensations}</small></p>
                             </div>
                             <div class="element">
-                              <span class="circle"></span>
+                              <span class="circle CRITICAL"></span>
                               <p><b>Conflicto:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.DISPENCACION.conflicts}</small></p>
+                            </div>
+                          </section>
+                        </div>
+                      </div>
+                    )
+                    break;
+                  case 'PAGOS':
+                    return (
+                      <div class="details">
+                        <header>
+                          <img src={pagos}/>&nbsp; Sistemas de Pago
+                          {this.state.PAGOS.load == true ? (<div class="lds-ring"><div></div><div></div><div></div><div></div></div>) : ('')}
+                        </header>
+                        <div class="sections">
+                          <div class="sections-headers">
+                            <p class="selected">Function {this.state.PAGOS.fun}%</p>
+                            <p>Speed 100%</p>
+                            <p>Consistency 100%</p>
+                          </div>
+                          <section class="sections-body">
+                            <div class="element">
+                              <span class="circle"></span>
+                              <p><b>Completados:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.PAGOS.completed}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.PAGOS.completed_p}%</small></p>
+                            </div>
+                            <div class="element">
+                              <span class="circle CRITICAL"></span>
+                              <p><b>Fallidos:</b>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.PAGOS.failed}</small>&nbsp;&nbsp;&nbsp;&nbsp;<small>{this.state.PAGOS.failed_p}</small></p>
                             </div>
                           </section>
                         </div>
