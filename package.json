@@ -10,7 +10,7 @@
         "uuid": "371d7be5-a940-48f9-9d43-c15a05b7ab38"
     },
     "dependencies": {
-        "axios": "^0.19.2",
+        "axios": "^0.21.1",
         "prop-types": "^15.6.2",
         "react": "^16.6.3",
         "react-dom": "^16.6.3"
